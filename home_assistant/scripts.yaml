@@ -1,0 +1,28 @@
+# Home Assistant scripts.yaml for preset Ambilight scene triggers
+# Requires the Android TV integration (media_player.philips_tv) or shell_command
+
+ambilight_set_vivid_video:
+  alias: "Ambilight: Follow Video (Vivid)"
+  icon: "mdi:palette"
+  sequence:
+    - service: androidtv.adb_command
+      target:
+        entity_id: media_player.philips_tv
+      data:
+        command: "am start -a org.droidtv.ambilight.AMBILIGHTSTYLE && sleep 0.4 && input keyevent KEYCODE_DPAD_RIGHT && input keyevent KEYCODE_DPAD_RIGHT && input keyevent KEYCODE_DPAD_CENTER"
+
+ambilight_set_game_mode:
+  alias: "Ambilight: Follow Video (Game)"
+  icon: "mdi:controller"
+  sequence:
+    - service: androidtv.adb_command
+      target:
+        entity_id: media_player.philips_tv
+      data:
+        command: "am start -a org.droidtv.ambilight.AMBILIGHTSTYLE && sleep 0.4 && input keyevent KEYCODE_DPAD_RIGHT && input keyevent KEYCODE_DPAD_RIGHT && input keyevent KEYCODE_DPAD_RIGHT && input keyevent KEYCODE_DPAD_CENTER"
+
+ambilight_lounge_mood_cycle:
+  alias: "Ambilight: Cycle Lounge Mood"
+  icon: "mdi:weather-sunset"
+  sequence:
+    - service: shell_command.ambilight_lounge_toggle

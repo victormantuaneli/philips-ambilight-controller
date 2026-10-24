@@ -1,0 +1,21 @@
+# Home Assistant configuration.yaml snippet for Philips Ambilight Control
+# Replace <TV_IP> with your Philips TV IP address (e.g. 192.168.4.148)
+
+shell_command:
+  ambilight_style_overlay: "adb -s <TV_IP>:5555 shell am start -a org.droidtv.ambilight.AMBILIGHTSTYLE"
+  ambilight_osd_menu: "adb -s <TV_IP>:5555 shell am start -a org.droidtv.ambilight.AMBILIGHTOSD"
+  ambilight_lounge_toggle: "adb -s <TV_IP>:5555 shell am start-service -a org.droidtv.intent.action.LoungeMode"
+  ambilight_lounge_stop: "adb -s <TV_IP>:5555 shell am stopservice org.droidtv.ambisvc/.LoungeMode"
+  ambilight_turn_off: "adb -s <TV_IP>:5555 shell settings put system ambilight_style 1"
+  ambilight_turn_video: "adb -s <TV_IP>:5555 shell settings put system ambilight_style 2"
+  ambilight_turn_audio: "adb -s <TV_IP>:5555 shell settings put system ambilight_style 3"
+
+template:
+  - light:
+      - name: "Philips TV Ambilight Mood"
+        unique_id: "philips_tv_ambilight_mood"
+        icon: "mdi:television-ambient-light"
+        turn_on:
+          service: shell_command.ambilight_lounge_toggle
+        turn_off:
+          service: shell_command.ambilight_lounge_stop

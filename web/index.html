@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Philips Ambilight Controller & Diagnostics</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Bar -->
+    <header class="top-header">
+      <div class="brand">
+        <div class="brand-icon">
+          <span class="glow-dot"></span>
+        </div>
+        <div>
+          <h1>Ambilight Controller</h1>
+          <p class="subtitle">Philips MediaTek Android TV / Google TV TA7</p>
+        </div>
+      </div>
+
+      <div class="connection-pill">
+        <div class="status-indicator" id="statusIndicator"></div>
+        <span class="status-text" id="statusText">Connecting...</span>
+        <span class="device-badge" id="deviceModel">Philips TA7</span>
+        <span class="ip-badge" id="deviceIp">192.168.4.148:5555</span>
+        <button class="btn-icon" id="btnRefreshStatus" title="Refresh Status">↻</button>
+      </div>
+    </header>
+
+    <!-- Main View Grid -->
+    <main class="main-layout">
+      <!-- Left Column: Command Panels -->
+      <section class="controls-column">
+        <!-- Interactive TV Simulator Screen with Live Glow -->
+        <div class="tv-simulator-wrapper">
+          <div class="ambilight-glow" id="ambilightHalo"></div>
+          <div class="tv-bezel">
+            <div class="tv-screen">
+              <div class="screen-content">
+                <span class="screen-logo">PHILIPS</span>
+                <div class="active-mode-display" id="activeModeDisplay">Ambilight: Active</div>
+                <div class="screen-meta" id="screenMeta">Style: Follow Video (Vivid)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 1: Core System Overlays & Power -->
+        <div class="panel">
+          <div class="panel-header">
+            <h2>⚡ System Overlays & Power</h2>
+            <span class="panel-tag">Direct Intents</span>
+          </div>
+          <div class="btn-grid">
+            <button class="btn-action primary" id="btnStyleMenu" data-cmd="am start -a org.droidtv.ambilight.AMBILIGHTSTYLE" data-glow="style">
+              <span class="btn-icon-symbol">🎛️</span>
+              <div class="btn-label">
+                <strong>Style Quick Picker</strong>
+                <small>am start org.droidtv.ambilight.AMBILIGHTSTYLE</small>
+              </div>
+            </button>
+
+            <button class="btn-action primary" id="btnOsdMenu" data-cmd="am start -a org.droidtv.ambilight.AMBILIGHTOSD" data-glow="osd">
+              <span class="btn-icon-symbol">⚙️</span>
+              <div class="btn-label">
+                <strong>Full Settings OSD</strong>
+                <small>am start org.droidtv.ambilight.AMBILIGHTOSD</small>
+              </div>
+            </button>
+
+            <button class="btn-action accent-lounge" id="btnLoungeToggle" data-cmd="am start-service -a org.droidtv.intent.action.LoungeMode" data-glow="lounge">
+              <span class="btn-icon-symbol">🛋️</span>
+              <div class="btn-label">
+                <strong>Toggle Lounge Light</strong>
+                <small>start-service LoungeMode (Ambient Mood)</small>
+              </div>
+            </button>
+
+            <button class="btn-action danger" id="btnLoungeStop" data-cmd="am stopservice org.droidtv.ambisvc/.LoungeMode" data-glow="off">
+              <span class="btn-icon-symbol">🛑</span>
+              <div class="btn-label">
+                <strong>Stop Lounge Light</strong>
+                <small>stopservice org.droidtv.ambisvc/.LoungeMode</small>
+              </div>
+            </button>
+
+            <button class="btn-action outline" id="btnStyleOff" data-cmd="settings put system ambilight_style 1" data-glow="off">
+              <span class="btn-icon-symbol">🌑</span>
+              <div class="btn-label">
+                <strong>Turn Off (Style 1)</strong>
+                <small>settings put system ambilight_style 1</small>
+              </div>
+            </button>
+
+            <button class="btn-action outline" id="btnStyleVideo" data-cmd="settings put system ambilight_style 2" data-glow="video">
+              <span class="btn-icon-symbol">🎬</span>
+              <div class="btn-label">
+                <strong>Set Video (Style 2)</strong>
+                <small>settings put system ambilight_style 2</small>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Section 2: Video Follow Modes -->
+        <div class="panel">
+          <div class="panel-header">
+            <h2>🎬 Follow Video Presets</h2>
+            <span class="panel-tag">Style 2 (On-Screen Tracking)</span>
+          </div>
+          <div class="pill-grid">
+            <button class="pill-btn" data-preset="video-standard" data-cmd="am start -a org.droidtv.ambilight.AMBILIGHTSTYLE && sleep 0.3 && input keyevent KEYCODE_DPAD_CENTER" data-glow="video-standard">
+              <span class="dot blue"></span> Standard
+            </button>
+            <button class="pill-btn" data-preset="video-natural" data-cmd="am start -a org.droidtv.ambilight.AMBILIGHTSTYLE && sleep 0.3 && input keyevent KEYCODE_DPAD_RIGHT && input keyevent KEYCODE_DPAD_CENTER" data-glow="video-natural">
+              <span class="dot green"></span> Natural
+            </button>
+            <button class="pill-btn" data-preset="video-vivid" data-cmd="am start -a org.droidtv.ambilight.AMBILIGHTSTYLE && sleep 0.3 && input keyevent KEYCODE_DPAD_RIGHT && input keyevent KEYCODE_DPAD_RIGHT && input keyevent KEYCODE_DPAD_CENTER" data-glow="video-vivid">
+              <span class="dot purple"></span> Vivid
+            </button>
+            <button class="pill-btn" data-preset="video-game" data-cmd="am start -a org.droidtv.ambilight.AMBILIGHTSTYLE && sleep 0.3 && input keyevent KEYCODE_DPAD_RIGHT && input keyevent KEYCODE_DPAD_RIGHT && input keyevent KEYCODE_DPAD_RIGHT && input keyevent KEYCODE_DPAD_CENTER" data-glow="video-game">
+              <span class="dot amber"></span> Game (Low Latency)
+            </button>
+            <button class="pill-btn" data-preset="video-comfort" data-cmd="am start -a org.droidtv.ambilight.AMBILIGHTSTYLE && sleep 0.3 && input keyevent KEYCODE_DPAD_DOWN && input keyevent KEYCODE_DPAD_CENTER" data-glow="video-comfort">
+              <span class="dot warm"></span> Comfort
+            </button>
+            <button class="pill-btn" data-preset="video-relax" data-cmd="am start -a org.droidtv.ambilight.AMBILIGHTSTYLE && sleep 0.3 && input keyevent KEYCODE_DPAD_DOWN && input keyevent KEYCODE_DPAD_RIGHT && input keyevent KEYCODE_DPAD_CENTER" data-glow="video-relax">
+              <span class="dot teal"></span> Relax
+            </button>
+          </div>
+        </div>
+
+        <!-- Section 3: Audio Follow & Ambient Mood Presets -->
+        <div class="panel-columns">
+          <!-- Audio Modes -->
+          <div class="panel">
+            <div class="panel-header">
+              <h2>🎵 Follow Audio Modes</h2>
+              <span class="panel-tag">Music Reactive</span>
+            </div>
+            <div class="list-btn-group">
+              <button class="list-btn" data-cmd="settings put system ambilight_style 3" data-glow="audio-colora">
+                <span class="list-btn-icon">💡</span>
+                <div><strong>Colora</strong><small>Adaptive Brightness Pulse (101)</small></div>
+              </button>
+              <button class="list-btn" data-cmd="settings put system ambilight_style 3" data-glow="audio-lumina">
+                <span class="list-btn-icon">🌈</span>
+                <div><strong>Lumina</strong><small>Frequency Spectrum Hue (102)</small></div>
+              </button>
+              <button class="list-btn" data-cmd="settings put system ambilight_style 3" data-glow="audio-retro">
+                <span class="list-btn-icon">📻</span>
+                <div><strong>Retro / Knight Rider</strong><small>Clockwise Beat Tracer (105)</small></div>
+              </button>
+              <button class="list-btn" data-cmd="settings put system ambilight_style 3" data-glow="audio-party">
+                <span class="list-btn-icon">🎉</span>
+                <div><strong>Party Strobe</strong><small>Fast Dynamic Multi-Color (110)</small></div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Color / Lounge Moods -->
+          <div class="panel">
+            <div class="panel-header">
+              <h2>🎨 Lounge Mood Tones</h2>
+              <span class="panel-tag">Style 4 & 5</span>
+            </div>
+            <div class="list-btn-group">
+              <button class="list-btn" data-cmd="am start-service -a org.droidtv.intent.action.LoungeMode" data-glow="mood-lava">
+                <span class="color-swatch lava"></span>
+                <div><strong>Hot Lava</strong><small>Warm red & ember tone (201)</small></div>
+              </button>
+              <button class="list-btn" data-cmd="am start-service -a org.droidtv.intent.action.LoungeMode" data-glow="mood-water">
+                <span class="color-swatch water"></span>
+                <div><strong>Deep Water</strong><small>Oceanic blue & indigo (202)</small></div>
+              </button>
+              <button class="list-btn" data-cmd="am start-service -a org.droidtv.intent.action.LoungeMode" data-glow="mood-nature">
+                <span class="color-swatch nature"></span>
+                <div><strong>Fresh Nature</strong><small>Earthy forest greens (203)</small></div>
+              </button>
+              <button class="list-btn" data-cmd="am start-service -a org.droidtv.intent.action.LoungeMode" data-glow="mood-sunset">
+                <span class="color-swatch sunset"></span>
+                <div><strong>Warm Sunset / ISF</strong><small>Calibrated D65 incandescent white (204/207)</small></div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 4: D-Pad & Remote Control Bar -->
+        <div class="panel">
+          <div class="panel-header">
+            <h2>🎮 Remote D-Pad Navigation</h2>
+            <span class="panel-tag">Navigate OSD Overlay</span>
+          </div>
+          <div class="remote-bar">
+            <button class="remote-btn" id="btnKeyBack" data-cmd="input keyevent KEYCODE_BACK">⮌ Back</button>
+            <div class="dpad-cluster">
+              <button class="remote-btn dpad-up" id="btnKeyUp" data-cmd="input keyevent KEYCODE_DPAD_UP">▲</button>
+              <div class="dpad-middle">
+                <button class="remote-btn dpad-left" id="btnKeyLeft" data-cmd="input keyevent KEYCODE_DPAD_LEFT">◀</button>
+                <button class="remote-btn dpad-center" id="btnKeyCenter" data-cmd="input keyevent KEYCODE_DPAD_CENTER">OK</button>
+                <button class="remote-btn dpad-right" id="btnKeyRight" data-cmd="input keyevent KEYCODE_DPAD_RIGHT">▶</button>
+              </div>
+              <button class="remote-btn dpad-down" id="btnKeyDown" data-cmd="input keyevent KEYCODE_DPAD_DOWN">▼</button>
+            </div>
+            <button class="remote-btn" id="btnKeyHome" data-cmd="input keyevent KEYCODE_HOME">⌂ Home</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Live Terminal Window -->
+      <section class="terminal-column">
+        <div class="terminal-card">
+          <div class="terminal-header">
+            <div class="terminal-title">
+              <span class="terminal-dots">
+                <span class="dot-red"></span>
+                <span class="dot-yellow"></span>
+                <span class="dot-green"></span>
+              </span>
+              <span>Live ADB Shell & Diagnostics Terminal</span>
+            </div>
+            <div class="terminal-actions">
+              <button class="btn-mini" id="btnClearLogs">Clear</button>
+              <button class="btn-mini" id="btnCopyLogs">Copy</button>
+            </div>
+          </div>
+
+          <!-- Terminal Output Body -->
+          <div class="terminal-body" id="terminalOutput">
+            <div class="log-entry system">
+              <span class="log-time">[Init]</span>
+              <span class="log-msg">Ambilight Controller initialised. Connected to target Philips TV.</span>
+            </div>
+            <div class="log-entry system">
+              <span class="log-time">[Target]</span>
+              <span class="log-msg">192.168.4.148:5555 (Philips Google TV TA7, Android 14)</span>
+            </div>
+          </div>
+
+          <!-- Interactive Custom Command Prompt -->
+          <div class="terminal-prompt">
+            <span class="prompt-symbol">$ adb shell</span>
+            <input type="text" id="customCmdInput" placeholder="Enter custom command (e.g. dumpsys package org.droidtv.ambisvc)..." autocomplete="off" spellcheck="false">
+            <button class="btn-send" id="btnSendCmd">Send</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
